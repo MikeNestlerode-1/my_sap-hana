@@ -1,0 +1,233 @@
+---
+
+- name: Installing OS Packages
+  yum:
+    name:
+      - gtk2
+      - libicu
+      - xulrunner
+      - sudo
+      - tcsh
+      - libssh2
+      - expect
+      - cairo
+      - graphviz
+      - iptraf-ng
+      - krb5-workstation
+      - krb5-libs
+      - libpng12
+      - nfs-utils
+      - lm_sensors
+      - rsyslog
+      - openssl
+      - PackageKit-gtk3-module
+      - libcanberra-gtk2
+      - libtool-ltdl
+      - xorg-x11-xauth 
+      - numactl
+      - xfsprogs
+      - net-tools
+      - bind-utils
+      - chrony
+      - ntp
+      - gdisk
+      - sg3_utils
+      - lvm2
+      - ntpdate
+      - tuned-profiles-sap-hana
+      - compat-sap-c++-7
+      - libatomic
+      - numad
+      - gcc 
+      - openssl-devel
+      - bzip2-devel
+      - libffi-devel
+    state: present
+  when: ansible_os_family == "RedHat"
+
+
+- name: Installing OS Packages
+  zypper:
+    name:
+      - libyui-qt-pkg7
+      - sapconf
+      - saptune
+      - glibc
+      - systemd
+      - tuned-profile-sap-hana
+      - ntp
+      - ntpdate
+    state: present
+  when: ansible_os_family == "SUSE" 
+
+- name: stop chronyd service
+  systemd:
+     name: chronyd
+     state: stopped
+
+- name: Add ntp servers to chrony.conf
+  blockinfile:
+    path: /etc/chrony.conf
+    block: |
+      server ntp.example.com
+      server ntp1.example.com}
+      server ntp2.example.com
+
+- name: reload chrony service
+  systemd:
+     name: chronyd
+     state: reloaded
+
+- name: start chronyd service
+  systemd:
+     name: chronyd
+     state: started
+
+- name: restart chronyd service
+  systemd:
+     name: chronyd
+     state: restarted   
+
+- name: stop chronyd service
+  systemd:
+     name: ntpd
+     state: stopped
+
+- name: disable & chronyd service
+  systemd:
+     name: chronyd
+     state: stopped
+     enabled: no
+
+- name: Add ntp servers to ntp.conf
+  blockinfile:
+    path: /etc/ntp.conf
+    block: |
+      server ntp.example.com 
+      server ntp1.example.com
+      server ntp2.example.com
+
+#- name: update current time
+#  command: ntpdate {{ ntpserver1 }}
+
+- name: Enable NTP and start ntp 
+  systemd: 
+     name: ntpd.service 
+     state: started 
+     enabled: yes
+
+- name: restart systemd-timedated service
+  systemd:
+     name: systemd-timedated.service
+     state: restarted
+
+- name: add ntp server to step-tickers
+  lineinfile: 
+    path: /etc/ntp/step-tickers
+    line: 'ntp.example.com'
+
+- name: Enable NTP and start ntp
+  systemd:
+     name: ntpdate
+     state: started
+     enabled: yes
+
+- name: Enable and start tuned
+  systemd:
+     name: tuned
+     state: started
+     enabled: yes
+
+- name:  tuned profile
+  command: "tuned-adm profile sap-hana"
+
+- name: Disable SELinux
+  selinux:
+    state: disabled
+
+- name: SAP HANA NUMA configuration 
+  copy:
+    dest: /etc/sysctl.d/sap_hana.conf
+    content: |
+       kernel.numa_balancing=0
+
+- name: Save sysctl.conf config
+  command: sysctl -p /etc/sysctl.d/sap_hana.conf 
+
+- name: disable & numad service
+  service:
+     name: numad
+     state: stopped
+     enabled: no
+
+- name: Create a symbolic link
+  file:
+    src: "{{ item.prop }}"
+    dest: "{{ item.value }}"
+    state: link
+  with_items:
+    - { prop: '/usr/lib64/libssl.so.10', value: '/usr/lib64/libssl.so.1.0.1' }
+    - { prop: '/usr/lib64/libcrypto.so.10', value: '/usr/lib64/libcrypto.so.1.0.1' }
+
+- name: Add always and Never to transparent Hugepages
+  command: "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+
+- name: transparent_hugepage update to never
+  lineinfile: 
+     dest: /etc/default/grub 
+     regexp: "GRUB_CMDLINE_LINUX=" 
+     line: "GRUB_CMDLINE_LINUX='crashkernel=auto  @ vconsole.keymap=us @kernel_arguments: vconsole.font=latarcyrheb-sun16 console=ttyS0  transparent_hugepage=never intel_idle.max_cstate=1 processor.max_cstate=1'"
+
+- name: modify transparent_hugepage
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+
+- name: processess for the SAPSYS
+  copy:
+    dest: /etc/security/limits.d/99-sapsys.conf
+    content: |
+       '@sapsys soft nproc unlimited'
+       '@sapsys hard nproc unlimited'
+
+- name: Disable and stop abrt-ccpp
+  systemd:
+     name: abrt-ccpp
+     state: stopped
+     enabled: no
+
+- name: Disable and stop abrtd
+  systemd:
+     name: abrtd
+     state: stopped
+     enabled: no
+
+- name: Add always and Never to transparent Hugepages
+  lineinfile:
+    dest: /etc/security/limits.conf
+    line: "{{ item }}"
+  with_items:
+    - '* soft core 0'
+    - '* hard core 0'
+
+- name: Disable and stop kdump
+  systemd:
+     name: kdump.service
+     state: stopped
+     enabled: no
+
+- name: Disable and stop firewall
+  systemd:
+     name: firewalld
+     state: stopped
+     enabled: no
+
+- name: download  Python3 
+  unarchive:
+    src: softwares/Python-3.7.3.tgz
+    dest: /usr/src
+
+- name: Install python3
+  shell: |
+    cd /usr/src/Python-3.7.3;
+    ./configure --enable-optimizations;
+    make altinstall;
+    rm /usr/src/Python-3.7.3.tgz  

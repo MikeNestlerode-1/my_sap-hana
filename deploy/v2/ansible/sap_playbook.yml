@@ -1,0 +1,12 @@
+---
+
+- hosts: "hdb0"
+  become: true
+  become_user: root
+  vars:
+    devices: []
+  roles:
+#    - { role: OS_lib_install }
+    - { role: OS_disks_preparation }
+#    - { role: webide-install }
+

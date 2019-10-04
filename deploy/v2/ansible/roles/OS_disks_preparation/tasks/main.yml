@@ -1,0 +1,105 @@
+- name: 
+  include_vars: 
+    file: ../hdb_sizes.json
+    name: hdb_sizes
+   
+- name:
+  include_vars:
+    file: "/home/{{ ansible_user}}/output.json"
+    name: output
+
+- set_fact: 
+    raw_disks: "{{ hostvars[inventory_hostname]['ansible_devices'].keys()| select('match', '^(sd)[c-z]')|list }}"  
+
+- set_fact:
+   devices: "{{devices| reject('search','os') | list }} + ['{{item.name}}']"
+  with_items:
+    - "{{hdb_sizes[output.databases[0].size].storage}}"
+
+- name: Create a partition
+  parted:
+    device: "/dev/{{ item }}"
+    number: 1
+    label: gpt
+    state: present
+  with_list: "{{ raw_disks }}"
+  register: part_disk
+  ignore_errors: true
+
+- name: copy the script
+  copy: 
+   src: "{{item}}"
+   dest: "/tmp/{{item}}"
+  with_items:
+   - ../hdb_sizes.json
+   - disks.py
+
+- name: Physical volumes
+  shell: "pvcreate /dev/{{item}}1"
+  with_items: "{{ raw_disks }}"
+  ignore_errors: true
+
+- name: get Disks information and physical volume groups
+  shell: "/usr/local/bin/python3.7 /tmp/disks.py {{output.databases[0].size}}"
+  register: disk_info
+
+- name: create logical volumes
+  lvol:
+    state: present
+    vg: "vg{{ item }}"
+    lv: "lv_hana_{{item}}"
+    size: 100%FREE
+  with_items: 
+   - "{{ devices }}"
+  ignore_errors: true
+
+- set_fact:
+   mountdirs: "{{devices| reject('search','backup','sap') | list }}+['backup']"
+
+- debug: var=mountdirs
+
+- name: create mount point directories
+  file:
+    path: "/hana/{{ item }}" 
+    state: directory
+  with_items: 
+    - "{{ mountdirs }}"
+
+- name: creating filesystem on LVMs
+  filesystem:
+     fstype: "{{ output.databases[0].filesystem |default('xfs')}}"
+     dev: "/dev/vg{{ item }}/lv_hana_{{ item }}"
+     opts: "su=64k,sw=2 "
+  with_items: 
+    - "{{ mountdirs }}"
+  ignore_errors: True
+
+- name: add fstab entries and Mount volumes
+  mount:
+    name: "/hana/{{ item }"
+    fstype: "{{ output.databases[0].filesystem  | default('xfs')}}"
+    opts: defaults
+    src: "/dev/vg{{ item }}/lv_hana_{{ item }}"
+    state: mounted
+  with_items:
+    - "{{ mountdirs }}"
+  ignore_errors: True
+
+- name: create sap  mount point directories
+  file:
+    path: "/usr/sap"
+    state: directory
+
+- name: creating filesystem on LVMs
+  filesystem:
+     fstype: "{{ output.databases[0].filesystem |default('xfs')}}"
+     dev: "/dev/vgsap/lv_hana_sap"
+     opts: "su=64k,sw=2 "
+
+- name: add fstab entries and Mount volumes
+  mount:
+    name: "/usr/sap"
+    fstype: "{{ output.databases[0].filesystem  | default('xfs')}}"
+    opts: defaults
+    src: "/dev/vgsap/lv_hana_sap"
+    state: mounted
