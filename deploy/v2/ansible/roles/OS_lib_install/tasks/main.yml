@@ -2,7 +2,9 @@
 
 - name: Installing OS packages
   yum:
-    name:
+    name: "{{ packages }}"
+  vars:
+    packages:
       - gtk2
       - libicu
       - xulrunner
