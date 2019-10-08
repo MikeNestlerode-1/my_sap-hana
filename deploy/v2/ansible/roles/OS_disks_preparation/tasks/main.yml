@@ -10,53 +10,53 @@
   with_list: "{{ raw_disks }}"
   register: part_disk
 
-- name: copy the disks script
+- name: Copy the disks script
   copy: src="disks.py" dest="/tmp/disks.py"
 
-- name: copy the hdbs sizes json script
+- name: Copy the hdbs sizes json script
   copy: src="../hdb_sizes.json" dest="/tmp/hdb_sizes.json"
 
 - name: Physical volumes
-  shell: "pvcreate /dev/{{item}}1"
+  shell: "pvcreate /dev/{{ item }}1"
   with_items: "{{ raw_disks }}"
 
-- name: get Disks information and physical volume groups
-  shell: "/usr/local/bin/python3.7 /tmp/disks.py {{output.databases[0].size}}"
+- name: Get disks information and physical volume groups
+  shell: "/usr/local/bin/python3.7 /tmp/disks.py {{ output.databases[0].size }}"
   register: disk_info
 
-- name: create logical volumes
+- name: Create logical volumes
   lvol:
     state: present
     vg: "vg{{ item.name }}"
-    lv: "lv_hana_{{item.name}}"
+    lv: "lv_hana_{{ item.name }}"
     size: 100%FREE
   when: item.name != 'os'
   with_items: 
    - "{{ hdb_sizes[output.databases[0].size].storage }}"
 
-- name: create mount point directories
+- name: Create mount point directories
   file:
     path: "{{ item.mount }}" 
     state: directory
   when: item.name  != 'os'
   with_items: 
-   - "{{hdb_sizes[output.databases[0].size].storage}}"
+   - "{{ hdb_sizes[output.databases[0].size].storage }}"
 
-- name: creating filesystem on LVMs
+- name: Creating filesystem on LVMs
   filesystem:
-     fstype: "{{ databases[0].filesystem |default('xfs')}}"
+     fstype: "{{ databases[0].filesystem |default('xfs') }}"
      dev: "/dev/vg{{ item.name }}/lv_hana_{{ item.name }}"
   when: item.name  != 'os'
   with_items: 
-   - "{{hdb_sizes[output.databases[0].size].storage}}"
+   - "{{ hdb_sizes[output.databases[0].size].storage }}"
 
-- name: add fstab entries and Mount volumes
+- name: Add fstab entries and mount volumes
   mount:
     path: "{{ item.mount }}"
-    fstype: "{{ databases[0].filesystem  | default('xfs')}}"
+    fstype: "{{ databases[0].filesystem  | default('xfs') }}"
     opts: defaults
     src: "/dev/vg{{ item.name }}/lv_hana_{{ item.name }}"
     state: mounted
   when: item.name != 'os'
   with_items:
-   - "{{hdb_sizes[output.databases[0].size].storage}}"
+   - "{{ hdb_sizes[output.databases[0].size].storage }}"

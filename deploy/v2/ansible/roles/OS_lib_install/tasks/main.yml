@@ -1,6 +1,6 @@
 ---
 
-- name: Installing OS Packages
+- name: Installing OS packages
   yum:
     name:
       - gtk2
@@ -45,7 +45,7 @@
     state: present
   when: ansible_os_family == "RedHat"
 
-- name: stop chronyd service
+- name: Stop chronyd service
   systemd:
      name: chronyd
      state: stopped
@@ -58,33 +58,33 @@
       server ntp1.example.com
       server ntp2.example.com
 
-- name: reload chrony service
+- name: Reload chrony service
   systemd:
      name: chronyd
      state: reloaded
 
-- name: start chronyd service
+- name: Start chronyd service
   systemd:
      name: chronyd
      state: started
 
-- name: restart chronyd service
+- name: Restart chronyd service
   systemd:
      name: chronyd
      state: restarted   
 
-- name: stop chronyd service
+- name: Stop NTP service
   systemd:
      name: ntpd
      state: stopped
 
-- name: disable & chronyd service
+- name: Disable & chronyd service
   systemd:
      name: chronyd
      state: stopped
      enabled: no
 
-- name: Add ntp servers to ntp.conf
+- name: Add NTP servers to ntp.conf
   blockinfile:
     path: /etc/ntp.conf
     block: |
@@ -92,17 +92,17 @@
       server ntp1.example.com
       server ntp2.example.com
 
-- name: restart systemd-timedated service
+- name: Restart systemd-timedated service
   systemd:
      name: systemd-timedated.service
      state: restarted
 
-- name: add ntp server to step-tickers
+- name: Add NTP server to step-tickers
   lineinfile: 
     path: /etc/ntp/step-tickers
     line: 'ntp.example.com'
 
-- name: Enable NTP and start ntp
+- name: Enable NTP and start NTP
   systemd:
      name: ntpdate
      state: started
@@ -114,10 +114,10 @@
      state: started
      enabled: yes
 
-- name:  tuned profile
+- name:  Tuned profile
   command: "tuned-adm profile sap-hana"
 
-- name: Disable SELinux
+- name: Disable selinux
   selinux:
     state: disabled
 
@@ -130,7 +130,7 @@
 - name: Save sysctl.conf config
   command: sysctl -p /etc/sysctl.d/sap_hana.conf 
 
-- name: disable & numad service
+- name: Disable & numad service
   service:
      name: numad
      state: stopped
@@ -145,19 +145,19 @@
     - { prop: '/usr/lib64/libssl.so.10', value: '/usr/lib64/libssl.so.1.0.1' }
     - { prop: '/usr/lib64/libcrypto.so.10', value: '/usr/lib64/libcrypto.so.1.0.1' }
 
-- name: Add always and Never to transparent Hugepages
+- name: Add always and never to transparent hugepages
   command: "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 
-- name: transparent_hugepage update to never
+- name: Transparent_hugepage update to never
   lineinfile: 
      dest: /etc/default/grub 
      regexp: "GRUB_CMDLINE_LINUX=" 
      line: "GRUB_CMDLINE_LINUX='crashkernel=auto  @ vconsole.keymap=us @kernel_arguments: vconsole.font=latarcyrheb-sun16 console=ttyS0  transparent_hugepage=never intel_idle.max_cstate=1 processor.max_cstate=1'"
 
-- name: modify transparent_hugepage
+- name: Modify transparent_hugepage
   command: grub2-mkconfig -o /boot/grub2/grub.cfg
 
-- name: processess for the SAPSYS
+- name: Processes for the SAPSYS
   copy:
     dest: /etc/security/limits.d/99-sapsys.conf
     content: |
@@ -176,7 +176,7 @@
      state: stopped
      enabled: no
 
-- name: Add always and Never to transparent Hugepages
+- name: Disable core dumps for all users 
   lineinfile:
     dest: /etc/security/limits.conf
     line: "{{ item }}"
@@ -196,7 +196,7 @@
      state: stopped
      enabled: no
 
-- name: download  Python3 
+- name: Download python3 
   unarchive:
     src: softwares/Python-3.7.3.tgz
     dest: /usr/src

@@ -13,7 +13,7 @@
 
     - name:
       include_vars:
-        file: "/home/{{ ansible_user}}/output.json"
+        file: "/home/{{ ansible_user }}/output.json"
         name: output
   roles:
     - { role: OS_lib_install }
