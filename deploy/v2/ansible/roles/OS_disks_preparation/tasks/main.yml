@@ -19,7 +19,6 @@
 - name: Physical volumes
   shell: "pvcreate /dev/{{item}}1"
   with_items: "{{ raw_disks }}"
-  ignore_errors: True
 
 - name: get Disks information and physical volume groups
   shell: "/usr/local/bin/python3.7 /tmp/disks.py {{output.databases[0].size}}"
