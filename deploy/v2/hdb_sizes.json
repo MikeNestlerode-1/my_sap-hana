@@ -10,7 +10,8 @@
                 "count" : 1,
                 "disk_type" : "StandardSSD_LRS",
                 "size_gb" : 64,
-                "caching" : "ReadWrite"
+                "caching" : "ReadWrite",
+                "mount": ""
             },
             {
                 "name" : "data",
@@ -18,7 +19,8 @@
                 "disk_type" : "Premium_LRS",
                 "size_gb" : 512,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false
+                "write_accelerator" : false,
+                "mount": "/hana/data"
             },
             {
                 "name" : "log",
@@ -26,7 +28,8 @@
                 "disk_type" : "Premium_LRS",
                 "size_gb" : 512,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false
+                "write_accelerator" : false,
+                "mount": "/hana/log"
             },
             {
                 "name" : "shared",
@@ -34,23 +37,26 @@
                 "disk_type" : "StandardSSD_LRS",
                 "size_gb" : 512,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false
+                "write_accelerator" : false,
+                "mount": "/hana/shared"
             },
             {
-                "name" : "logbackup",
+                "name" : "backup",
                 "count" : 1,
                 "disk_type" : "StandardSSD_LRS",
                 "size_gb" : 64,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false
+                "write_accelerator" : false,
+                "mount": "/hana/backup"
             },
             {
-                "name" : "databackup",
+                "name" : "sap",
                 "count" : 1,
                 "disk_type" : "StandardSSD_LRS",
                 "size_gb" : 512,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false
+                "write_accelerator" : false,
+                "mount": "/usr/sap"
             }
         ]
     }

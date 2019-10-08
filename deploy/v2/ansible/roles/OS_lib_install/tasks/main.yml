@@ -70,7 +70,7 @@
     path: /etc/chrony.conf
     block: |
       server ntp.example.com
-      server ntp1.example.com}
+      server ntp1.example.com
       server ntp2.example.com
 
 - name: reload chrony service
@@ -107,14 +107,11 @@
       server ntp1.example.com
       server ntp2.example.com
 
-#- name: update current time
-#  command: ntpdate {{ ntpserver1 }}
-
-- name: Enable NTP and start ntp 
-  systemd: 
-     name: ntpd.service 
-     state: started 
-     enabled: yes
+#- name: Enable NTP and start ntp 
+#  systemd: 
+#     name: ntpd.service 
+#     state: started 
+#     enabled: yes
 
 - name: restart systemd-timedated service
   systemd:
@@ -226,8 +223,9 @@
     dest: /usr/src
 
 - name: Install python3
-  shell: |
-    cd /usr/src/Python-3.7.3;
-    ./configure --enable-optimizations;
-    make altinstall;
-    rm /usr/src/Python-3.7.3.tgz  
+  command: "{{ item }}"
+  args:
+    chdir: "/usr/src/Python-3.7.3"
+  with_items:
+    - "./configure --enable-optimizations"
+    - "make altinstall"

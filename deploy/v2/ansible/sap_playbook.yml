@@ -5,8 +5,17 @@
   become_user: root
   vars:
     devices: []
+  pre_tasks:
+    - name:
+      include_vars:
+        file: ../hdb_sizes.json
+        name: hdb_sizes
+
+    - name:
+      include_vars:
+        file: "/home/{{ ansible_user}}/output.json"
+        name: output
   roles:
-#    - { role: OS_lib_install }
+    - { role: OS_lib_install }
     - { role: OS_disks_preparation }
-#    - { role: webide-install }
 
