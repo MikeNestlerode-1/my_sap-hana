@@ -45,21 +45,6 @@
     state: present
   when: ansible_os_family == "RedHat"
 
-
-- name: Installing OS Packages
-  zypper:
-    name:
-      - libyui-qt-pkg7
-      - sapconf
-      - saptune
-      - glibc
-      - systemd
-      - tuned-profile-sap-hana
-      - ntp
-      - ntpdate
-    state: present
-  when: ansible_os_family == "SUSE" 
-
 - name: stop chronyd service
   systemd:
      name: chronyd
@@ -106,12 +91,6 @@
       server ntp.example.com 
       server ntp1.example.com
       server ntp2.example.com
-
-#- name: Enable NTP and start ntp 
-#  systemd: 
-#     name: ntpd.service 
-#     state: started 
-#     enabled: yes
 
 - name: restart systemd-timedated service
   systemd:
