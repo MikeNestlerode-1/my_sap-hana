@@ -57,7 +57,7 @@
 - name:  Tuned profile
   command: "tuned-adm profile sap-hana"
 
-- name: Disable selinux
+- name: Disable SELinux
   selinux:
     state: disabled
   register: se_state
@@ -137,6 +137,6 @@
      state: stopped
      enabled: no
 
-- name: Reboot the Machine if SELinux is disabled
+- name: Reboot the machine if SELinux is disabled
   reboot:
   when: se_state.changed and ansible_os_family == 'RedHat'
