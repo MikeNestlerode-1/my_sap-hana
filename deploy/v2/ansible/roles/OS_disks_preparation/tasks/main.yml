@@ -8,7 +8,7 @@
   set_fact:
     start: "{{ start|int+item.count }}"
     disk_dict: "{{ disk_dict | combine({ item.name: {'count': item.count, 'devices': device_list.stdout_lines[start|int:start|int+item.count]} }) }}"
-  loop: "{{ hdb_sizes[output.databases[0].size].storage}}"
+  loop: "{{ hdb_sizes[output.databases[0].size].storage }}"
   when: item.name != 'os'
 
 - name: Create physical volume group
@@ -29,21 +29,21 @@
 
 - name: Create mount point directories
   file:
-    path: "{% if item.key=='sap' %}/usr/{{item.key}}{% else %}/hana/{{item.key}}{% endif %}"
+    path: "{% if item.key=='sap' %}/usr/{{ item.key }}{% else %}/hana/{{ item.key }}{% endif %}"
     state: directory
   with_dict: "{{ disk_dict }}"
 
 - name: Creating filesystem on LVMs
   filesystem:
-     fstype: "{{ databases[0].filesystem |default('xfs') }}"
+     fstype: "{{ output.databases[0].filesystem |default('xfs') }}"
      dev: "/dev/vg{{ item.key }}/lv_hana_{{ item.key }}"
   with_dict: "{{ disk_dict }}"
   register: file_system
 
 - name: Add fstab entries and mount volumes
   mount:
-    path: "{% if item.key=='sap' %}/usr/{{item.key}}{% else %}/hana/{{item.key}}{% endif %}"
-    fstype: "{{ databases[0].filesystem  | default('xfs') }}"
+    path: "{% if item.key=='sap' %}/usr/{{ item.key }}{% else %}/hana/{{ item.key }}{% endif %}"
+    fstype: "{{ output.databases[0].filesystem  | default('xfs') }}"
     opts: defaults
     src: "/dev/vg{{ item.key }}/lv_hana_{{ item.key }}"
     state: mounted
