@@ -5,6 +5,7 @@
     name: "{{ packages }}"
   vars:
     packages:
+      - "@base"
       - gtk2
       - libicu
       - xulrunner
@@ -47,69 +48,6 @@
     state: present
   when: ansible_os_family == "RedHat"
 
-- name: Stop chronyd service
-  systemd:
-     name: chronyd
-     state: stopped
-
-- name: Add ntp servers to chrony.conf
-  blockinfile:
-    path: /etc/chrony.conf
-    block: |
-      server ntp.example.com
-      server ntp1.example.com
-      server ntp2.example.com
-
-- name: Reload chrony service
-  systemd:
-     name: chronyd
-     state: reloaded
-
-- name: Start chronyd service
-  systemd:
-     name: chronyd
-     state: started
-
-- name: Restart chronyd service
-  systemd:
-     name: chronyd
-     state: restarted   
-
-- name: Stop NTP service
-  systemd:
-     name: ntpd
-     state: stopped
-
-- name: Disable & chronyd service
-  systemd:
-     name: chronyd
-     state: stopped
-     enabled: no
-
-- name: Add NTP servers to ntp.conf
-  blockinfile:
-    path: /etc/ntp.conf
-    block: |
-      server ntp.example.com 
-      server ntp1.example.com
-      server ntp2.example.com
-
-- name: Restart systemd-timedated service
-  systemd:
-     name: systemd-timedated.service
-     state: restarted
-
-- name: Add NTP server to step-tickers
-  lineinfile: 
-    path: /etc/ntp/step-tickers
-    line: 'ntp.example.com'
-
-- name: Enable NTP and start NTP
-  systemd:
-     name: ntpdate
-     state: started
-     enabled: yes
-
 - name: Enable and start tuned
   systemd:
      name: tuned
@@ -122,6 +60,7 @@
 - name: Disable selinux
   selinux:
     state: disabled
+  register: se_state
 
 - name: SAP HANA NUMA configuration 
   copy:
@@ -150,11 +89,11 @@
 - name: Add always and never to transparent hugepages
   command: "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 
-- name: Transparent_hugepage update to never
+- name: Transparent_hugepage update to never and configure processor C-States
   lineinfile: 
      dest: /etc/default/grub 
      regexp: "GRUB_CMDLINE_LINUX=" 
-     line: "GRUB_CMDLINE_LINUX='crashkernel=auto  @ vconsole.keymap=us @kernel_arguments: vconsole.font=latarcyrheb-sun16 console=ttyS0  transparent_hugepage=never intel_idle.max_cstate=1 processor.max_cstate=1'"
+     line: "GRUB_CMDLINE_LINUX='crashkernel=auto  @ vconsole.keymap=us @kernel_arguments: transparent_hugepage=never intel_idle.max_cstate=1 processor.max_cstate=1'"
 
 - name: Modify transparent_hugepage
   command: grub2-mkconfig -o /boot/grub2/grub.cfg
@@ -198,15 +137,6 @@
      state: stopped
      enabled: no
 
-- name: Download python3 
-  unarchive:
-    src: softwares/Python-3.7.3.tgz
-    dest: /usr/src
-
-- name: Install python3
-  command: "{{ item }}"
-  args:
-    chdir: "/usr/src/Python-3.7.3"
-  with_items:
-    - "./configure --enable-optimizations"
-    - "make altinstall"
+- name: Reboot the Machine if SELinux is disabled
+  reboot:
+  when: se_state.changed and ansible_os_family == 'RedHat'

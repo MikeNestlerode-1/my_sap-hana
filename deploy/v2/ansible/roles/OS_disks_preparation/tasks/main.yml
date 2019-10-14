@@ -1,62 +1,51 @@
-- set_fact: 
-    raw_disks: "{{ hostvars[inventory_hostname]['ansible_devices'].keys()| select('match', '^(sd)[c-z]')|list }}"  
+---
 
-- name: Create a partition
-  parted:
-    device: "/dev/{{ item }}"
-    number: 1
-    label: gpt
-    state: present
-  with_list: "{{ raw_disks }}"
-  register: part_disk
+- name: Create device list
+  shell: ls -l /dev/disk/azure/scsi1/* | awk '{split($0,disks," "); system("readlink -f " disks[9])}'
+  register: device_list
 
-- name: Copy the disks script
-  copy: src="disks.py" dest="/tmp/disks.py"
+- name: Create dictionary with disk name and devices list
+  set_fact:
+    start: "{{ start|int+item.count }}"
+    disk_dict: "{{ disk_dict | combine({ item.name: {'count': item.count, 'devices': device_list.stdout_lines[start|int:start|int+item.count]} }) }}"
+  loop: "{{ hdb_sizes[output.databases[0].size].storage}}"
+  when: item.name != 'os'
 
-- name: Copy the hdbs sizes json script
-  copy: src="../hdb_sizes.json" dest="/tmp/hdb_sizes.json"
+- name: Create physical volume group
+  lvg: 
+    vg: "vg{{ item.key }}"
+    pvs: "{{ item.value.devices | join (',') }}"
+  with_dict: "{{ disk_dict }}"
+  register: physical_vg
 
-- name: Physical volumes
-  shell: "pvcreate /dev/{{ item }}1"
-  with_items: "{{ raw_disks }}"
-
-- name: Get disks information and physical volume groups
-  shell: "/usr/local/bin/python3.7 /tmp/disks.py {{ output.databases[0].size }}"
-  register: disk_info
-
-- name: Create logical volumes
+- name: Create logical volume group
   lvol:
     state: present
-    vg: "vg{{ item.name }}"
-    lv: "lv_hana_{{ item.name }}"
+    vg: "vg{{ item.key }}"
+    lv: "lv_hana_{{ item.key }}"
     size: 100%FREE
-  when: item.name != 'os'
-  with_items: 
-   - "{{ hdb_sizes[output.databases[0].size].storage }}"
+  with_dict: "{{ disk_dict }}"
+  register: logical_vg
 
 - name: Create mount point directories
   file:
-    path: "{{ item.mount }}" 
+    path: "{% if item.key=='sap' %}/usr/{{item.key}}{% else %}/hana/{{item.key}}{% endif %}"
     state: directory
-  when: item.name  != 'os'
-  with_items: 
-   - "{{ hdb_sizes[output.databases[0].size].storage }}"
+  with_dict: "{{ disk_dict }}"
 
 - name: Creating filesystem on LVMs
   filesystem:
      fstype: "{{ databases[0].filesystem |default('xfs') }}"
-     dev: "/dev/vg{{ item.name }}/lv_hana_{{ item.name }}"
-  when: item.name  != 'os'
-  with_items: 
-   - "{{ hdb_sizes[output.databases[0].size].storage }}"
+     dev: "/dev/vg{{ item.key }}/lv_hana_{{ item.key }}"
+  with_dict: "{{ disk_dict }}"
+  register: file_system
 
 - name: Add fstab entries and mount volumes
   mount:
-    path: "{{ item.mount }}"
+    path: "{% if item.key=='sap' %}/usr/{{item.key}}{% else %}/hana/{{item.key}}{% endif %}"
     fstype: "{{ databases[0].filesystem  | default('xfs') }}"
     opts: defaults
-    src: "/dev/vg{{ item.name }}/lv_hana_{{ item.name }}"
+    src: "/dev/vg{{ item.key }}/lv_hana_{{ item.key }}"
     state: mounted
-  when: item.name != 'os'
-  with_items:
-   - "{{ hdb_sizes[output.databases[0].size].storage }}"
+  with_dict: "{{ disk_dict }}"
+  register: mount_vol

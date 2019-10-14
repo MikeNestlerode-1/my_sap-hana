@@ -10,8 +10,7 @@
                 "count" : 1,
                 "disk_type" : "StandardSSD_LRS",
                 "size_gb" : 64,
-                "caching" : "ReadWrite",
-                "mount": ""
+                "caching" : "ReadWrite"
             },
             {
                 "name" : "data",
@@ -19,8 +18,7 @@
                 "disk_type" : "Premium_LRS",
                 "size_gb" : 512,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false,
-                "mount": "/hana/data"
+                "write_accelerator" : false
             },
             {
                 "name" : "log",
@@ -28,8 +26,7 @@
                 "disk_type" : "Premium_LRS",
                 "size_gb" : 512,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false,
-                "mount": "/hana/log"
+                "write_accelerator" : false
             },
             {
                 "name" : "shared",
@@ -37,8 +34,7 @@
                 "disk_type" : "StandardSSD_LRS",
                 "size_gb" : 512,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false,
-                "mount": "/hana/shared"
+                "write_accelerator" : false
             },
             {
                 "name" : "backup",
@@ -46,8 +42,7 @@
                 "disk_type" : "StandardSSD_LRS",
                 "size_gb" : 64,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false,
-                "mount": "/hana/backup"
+                "write_accelerator" : false
             },
             {
                 "name" : "sap",
@@ -55,8 +50,7 @@
                 "disk_type" : "StandardSSD_LRS",
                 "size_gb" : 512,
                 "caching" : "ReadOnly",
-                "write_accelerator" : false,
-                "mount": "/usr/sap"
+                "write_accelerator" : false
             }
         ]
     }
