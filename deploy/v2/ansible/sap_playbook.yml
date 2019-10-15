@@ -1,6 +1,6 @@
 ---
 
-- hosts: "hdb0"
+- hosts: hanadbnodes
   become: true
   become_user: root
   vars:
