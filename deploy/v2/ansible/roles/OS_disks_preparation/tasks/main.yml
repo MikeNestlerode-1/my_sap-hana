@@ -17,6 +17,7 @@
     pvs: "{{ item.value.devices | join (',') }}"
   with_dict: "{{ disk_dict }}"
   register: physical_vg
+  failed_when:  physical_vg is failed
 
 - name: Create logical volume group
   lvol:
@@ -26,7 +27,7 @@
     size: 100%FREE
   with_dict: "{{ disk_dict }}"
   register: logical_vg
-  ignore_errors: true
+  failed_when: logical_vg is failed
 
 - name: Create mount point directories
   file:
@@ -40,6 +41,7 @@
      dev: "/dev/vg{{ item.key }}/lv_hana_{{ item.key }}"
   with_dict: "{{ disk_dict }}"
   register: file_system
+  failed_when: file_system is failed
 
 - name: Add fstab entries and mount volumes
   mount:
@@ -49,4 +51,5 @@
     src: "/dev/vg{{ item.key }}/lv_hana_{{ item.key }}"
     state: mounted
   with_dict: "{{ disk_dict }}"
-  register: mount_vol
+  register: vol_mount
+  failed_when: vol_mount is failed
