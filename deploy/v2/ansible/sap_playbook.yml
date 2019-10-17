@@ -6,6 +6,8 @@
   vars:
     disk_dict: {}
     start: 0
+  vars_files: 
+     - "vars/packages.yml" 
   pre_tasks:
     - name:
       include_vars:

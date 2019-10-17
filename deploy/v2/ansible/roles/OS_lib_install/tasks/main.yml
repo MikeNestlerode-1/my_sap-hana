@@ -1,81 +1,57 @@
 ---
 
 - name: Installing OS packages
-  yum:
-    name: "{{ packages }}"
-  vars:
-    packages:
-      - "@base"
-      - gtk2
-      - libicu
-      - xulrunner
-      - sudo
-      - tcsh
-      - libssh2
-      - expect
-      - cairo
-      - graphviz
-      - iptraf-ng
-      - krb5-workstation
-      - krb5-libs
-      - libpng12
-      - nfs-utils
-      - lm_sensors
-      - rsyslog
-      - openssl
-      - PackageKit-gtk3-module
-      - libcanberra-gtk2
-      - libtool-ltdl
-      - xorg-x11-xauth 
-      - numactl
-      - xfsprogs
-      - net-tools
-      - bind-utils
-      - chrony
-      - ntp
-      - gdisk
-      - sg3_utils
-      - lvm2
-      - ntpdate
-      - tuned-profiles-sap-hana
-      - compat-sap-c++-7
-      - libatomic
-      - numad
-      - gcc 
-      - openssl-devel
-      - bzip2-devel
-      - libffi-devel
+  package: 
+    name: "{{ item }}" 
     state: present
-  when: ansible_os_family == "RedHat"
+  with_items: "{{ packages[ansible_os_family] }}"
 
 - name: Enable and start tuned
   systemd:
      name: tuned
      state: started
      enabled: yes
+  when: ansible_os_family == "RedHat"
 
 - name:  Tuned profile
   command: "tuned-adm profile sap-hana"
+  when: ansible_os_family == "RedHat"
 
 - name: Disable SELinux
   selinux:
     state: disabled
   register: se_state
+  when: ansible_os_family == "RedHat"
+
+- name: Preconfigured SAP HANA settings
+  command: "saptune solution apply HANA"
+  when: ansible_os_family == "Suse"
+
+- name:  enable tuned profile saptune
+  command: "saptune daemon start"
+  when: ansible_os_family == "Suse"
 
 - name: SAP HANA NUMA configuration 
   copy:
     dest: /etc/sysctl.d/sap_hana.conf
     content: |
        kernel.numa_balancing=0
+  when: ansible_os_family == "RedHat"
 
 - name: Save sysctl.conf config
   command: sysctl -p /etc/sysctl.d/sap_hana.conf 
+  when: ansible_os_family == "RedHat"
+
+- name: Save sysctl.conf config
+  command: sysctl -p /etc/sysctl.d/sap_hana.conf 
+  when: ansible_os_family == "RedHat"
 
 - name: Disable & numad service
   service:
      name: numad
      state: stopped
      enabled: no
+  when: ansible_os_family == "RedHat"
 
 - name: Create a symbolic link
   file:
@@ -85,6 +61,7 @@
   with_items:
     - { prop: '/usr/lib64/libssl.so.10', value: '/usr/lib64/libssl.so.1.0.1' }
     - { prop: '/usr/lib64/libcrypto.so.10', value: '/usr/lib64/libcrypto.so.1.0.1' }
+  when: ansible_os_family == "RedHat"
 
 - name: Add always and never to transparent hugepages
   command: "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
@@ -110,12 +87,14 @@
      name: abrt-ccpp
      state: stopped
      enabled: no
+  when: ansible_os_family == "RedHat"
 
 - name: Disable and stop abrtd
   systemd:
      name: abrtd
      state: stopped
      enabled: no
+  when: ansible_os_family == "RedHat"
 
 - name: Disable core dumps for all users 
   lineinfile:
@@ -130,12 +109,14 @@
      name: kdump.service
      state: stopped
      enabled: no
+  when: ansible_os_family == "RedHat"
 
 - name: Disable and stop firewall
   systemd:
      name: firewalld
      state: stopped
      enabled: no
+  when: ansible_os_family == "RedHat"
 
 - name: Reboot the machine if SELinux is disabled
   reboot:
