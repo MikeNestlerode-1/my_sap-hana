@@ -13,11 +13,11 @@
 
 - name: Create physical volume group
   lvg: 
-    vg: "vg{{ item.key }}"
+    vg: "vg_{{ item.key }}"
     pvs: "{{ item.value.devices }}"
   with_dict: "{{ disk_dict }}"
   register: physical_vg
-  failed_when:  physical_vg is failed
+  failed_when: physical_vg is failed
 
 - name: Create logical volume group
   lvol:
@@ -28,7 +28,7 @@
   with_dict: "{{ disk_dict }}"
   register: logical_vg
   failed_when: logical_vg is failed
-
+ 
 - name: Create mount point directories
   file:
     path: "{% if item.key=='sap' %}/usr/{{ item.key }}{% else %}/hana/{{ item.key }}{% endif %}"
@@ -47,7 +47,7 @@
   mount:
     path: "{% if item.key=='sap' %}/usr/{{ item.key }}{% else %}/hana/{{ item.key }}{% endif %}"
     fstype: "{{ output.databases|map(attribute='filesystem')| join(',') | default('xfs') }}"
-    opts: defaults
+    opts: "defaults,nofail"
     src: "/dev/vg_{{ item.key }}/lv_hana_{{ item.key }}"
     state: mounted
   with_dict: "{{ disk_dict }}"
