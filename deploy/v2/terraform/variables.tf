@@ -9,3 +9,11 @@ variable "jumpboxes" {
 variable "databases" {
   description = "Details of the HANA database nodes"
 }
+
+variable "software" {
+  description = "Details of the infrastructure components required for SAP installation"
+}
+
+variable "sshkey" {
+  description = "Details of ssh key pair"
+}

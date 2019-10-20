@@ -78,13 +78,14 @@
         "size": "Standard_D2s_v3",
         "disk_type": "StandardSSD_LRS",
         "os": {
-          "publisher": "Canonical",
-          "offer": "UbuntuServer",
-          "sku": "16.04-LTS"
+          "publisher": "Redhat",
+          "offer": "RHEL-SAP",
+          "sku": "7.5"
         },
         "authentication": {
-          "type": "key",
-          "username": "azureadm"
+          "type": "password",
+          "username": "azureadm",
+          "password": "Sap@hana2019!"
         },
         "components": [
           "hana_studio_linux",
@@ -116,12 +117,12 @@
       "platform": "HANA",
       "db_version": "2.00.043",
       "os": {
-        "publisher": "SUSE",
-        "offer": "SLES-SAP",
-        "sku": "12-sp2"
+        "publisher": "Redhat",
+        "offer": "RHEL-SAP-HANA",
+        "sku": "7.3"
       },
       "size": "S",
-      "filesystem": "xfs",
+      "filesystem": "XFS",
       "high_availability": false,
       "authentication": {
         "type": "key",
@@ -154,7 +155,7 @@
       ],
       "dbnodes": [
         {
-          "name": "hdb-node1",
+          "name": "hdb1",
           "role": "worker"
         }
       ]
@@ -171,7 +172,7 @@
     }
   },
   "sshkey": {
-    "path_to_public_key": "/tmp/sshkey.pub",
-    "path_to_private_key": "/tmp/sshkey"
+    "path_to_public_key": "~/.ssh/id_rsa.pub",
+    "path_to_private_key": "~/.ssh/id_rsa"
   }
 }
