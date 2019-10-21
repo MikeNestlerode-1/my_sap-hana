@@ -6,6 +6,15 @@
     state: present
   with_items: "{{ packages[ansible_os_family] }}"
 
+- name: Installing Hana 2.0 SPS04  packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libgcc_s1
+    - libstdc++6
+    - libatomic1
+
 - name: Preconfigured SAP HANA settings
   command: "saptune solution apply HANA"
   when: ansible_os_family == "Suse"

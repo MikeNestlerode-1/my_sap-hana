@@ -34,8 +34,6 @@ packages:
       - lvm2
       - ntpdate
       - tuned-profiles-sap-hana
-      - compat-sap-c++-7
-      - libatomic
       - numad
 
     Suse: 
@@ -47,6 +45,3 @@ packages:
       - tuned
       - ntp
       - numad
-      - libgcc_s1
-      - libstdc++6
-      - libatomic1

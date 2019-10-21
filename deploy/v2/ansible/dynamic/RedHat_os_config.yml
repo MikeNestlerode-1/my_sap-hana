@@ -6,6 +6,15 @@
     state: present
   with_items: "{{ packages[ansible_os_family] }}"
 
+- name: Installing Hana 2.0 SPS04  packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+      - compat-sap-c++-7
+      - libatomic
+  when: "{{ output.databases|map(attribute='version')| join(',')}} == '2.00.043'"
+
 - name: Enable and start tuned
   systemd:
      name: tuned
