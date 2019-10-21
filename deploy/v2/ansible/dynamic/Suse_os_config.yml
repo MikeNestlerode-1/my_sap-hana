@@ -1,0 +1,15 @@
+---
+
+- name: Installing OS packages
+  package: 
+    name: "{{ item }}" 
+    state: present
+  with_items: "{{ packages[ansible_os_family] }}"
+
+- name: Preconfigured SAP HANA settings
+  command: "saptune solution apply HANA"
+  when: ansible_os_family == "Suse"
+
+- name:  enable tuned profile saptune
+  command: "saptune daemon start"
+  when: ansible_os_family == "Suse"
