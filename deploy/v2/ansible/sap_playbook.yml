@@ -6,7 +6,6 @@
   vars:
     disk_dict: {}
     start: 0
-    bits_script_loc: "/home/{{ ansible_user }}/sap-hana/deploy/v2/python_scripts/downloader"
   vars_files: 
      - "vars/packages.yml" 
   pre_tasks:
