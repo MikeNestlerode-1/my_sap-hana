@@ -21,4 +21,3 @@
   roles:
     - { role: OS_lib_install }
     - { role: OS_disks_preparation }
-    - { role: Bits_download }
