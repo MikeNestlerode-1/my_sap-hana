@@ -1,12 +1,12 @@
 ---
 
 - name: config common OS libs
-  include_tasks: "dynamic/common_os_config.yml"
+  include_tasks: "common/os_config.yml"
 
-- name: config RedHat
-  include_tasks: "dynamic/{{ ansible_os_family }}_os_config.yml"
+- name: config RedHat DB node
+  include_tasks: "{{ ansible_os_family }}/RHEL-{{ ansible_distribution_major_version }}/os_config.yml"
   when:  ansible_os_family == "RedHat"
 
-- name: config SUSE
-  include_tasks: "dynamic/{{ ansible_os_family }}_os_config.yml"
+- name: config SUSE DB node
+  include_tasks: "{{ ansible_os_family }}/SUSE-{{ ansible_distribution_major_version }}/os_config.yml"
   when:  ansible_os_family == "Suse"
