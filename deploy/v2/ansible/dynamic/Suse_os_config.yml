@@ -14,6 +14,7 @@
     - libgcc_s1
     - libstdc++6
     - libatomic1
+  when: "{{ output.databases|map(attribute='version')| join(',')}} == '2.00.043'"
 
 - name: Preconfigured SAP HANA settings
   command: "saptune solution apply HANA"
