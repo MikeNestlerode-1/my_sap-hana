@@ -1,10 +1,11 @@
---
+---
 
-- name: Packages3.2 - Installing OS packages
-  package: 
+- name: Packages3.2 - Installing OS package
+  package:
     name: "{{ item }}" 
     state: present
-  with_items: "{{ packages[ansible_os_family] }}"
+  with_items: 
+    - "{{ packages[ansible_os_family] }}"
 
 - name: 2593824 - Additional Packages HANA 2 SPS04
   package:
@@ -91,7 +92,7 @@
 - name: 2292690 - Tuned profile 1
   systemd:
      name: tuned
-     state: stated
+     state: started
      enabled: yes
 
 - name: 2292690 - Tuned profile 2
