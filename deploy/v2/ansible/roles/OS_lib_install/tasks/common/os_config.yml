@@ -22,7 +22,7 @@
     - { prop: "ResourceDisk.EnableSwap", value: "y" }
     - { prop: "ResourceDisk.SwapSizeMB", value: "{{ (hdb_sizes[hana_database.size].compute.swap_size_gb) * 1024|int }}" }
 
-- name: restart waagnet
+- name: restart waagent
   service:
      name: waagent 
      state: restarted
