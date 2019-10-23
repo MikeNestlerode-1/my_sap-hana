@@ -1,15 +1,15 @@
 ---
 
-- name: HugePages & C-States(RHEL-3.10,3.12, SUSE-2205917) - Disable Transparent Hugepages & Configure Processor C-States1
+- name: HugePages & C-States(RHEL-3.10,3.12, SUSE-2205917) - Disable Transparent Hugepages & Configure Processor C-States 1
   command: "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 
-- name: HugePages & C-States(RHEL-3.10,3.12, SUSE-2205917) - Disable Transparent Hugepages & Configure Processor C-States2
+- name: HugePages & C-States(RHEL-3.10,3.12, SUSE-2205917) - Disable Transparent Hugepages & Configure Processor C-States 2
   lineinfile: 
      dest: /etc/default/grub 
      regexp: "GRUB_CMDLINE_LINUX=" 
      line: "GRUB_CMDLINE_LINUX='crashkernel=auto  @ vconsole.keymap=us @kernel_arguments: transparent_hugepage=never intel_idle.max_cstate=1 processor.max_cstate=1'"
 
-- name: HugePages & C-States(RHEL-3.10,3.12, SUSE-2205917) - Disable Transparent Hugepages & Configure Processor C-States3
+- name: HugePages & C-States(RHEL-3.10,3.12, SUSE-2205917) - Disable Transparent Hugepages & Configure Processor C-States 3
   command: grub2-mkconfig -o /boot/grub2/grub.cfg
 
 - name: SWAP space
@@ -20,7 +20,7 @@
   with_items:
     - { prop: "ResourceDisk.Format", value: "y" }
     - { prop: "ResourceDisk.EnableSwap", value: "y" }
-    - { prop: "ResourceDisk.SwapSizeMB", value: "{{ (hdb_sizes[output.databases | map(attribute='size')| join(',')].compute.swap_size_gb) * 1024|int }}" }
+    - { prop: "ResourceDisk.SwapSizeMB", value: "{{ (hdb_sizes[hana_database.size].compute.swap_size_gb) * 1024|int }}" }
 
 - name: restart waagnet
   service:
