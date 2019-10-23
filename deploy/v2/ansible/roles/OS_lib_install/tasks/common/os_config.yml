@@ -1,33 +1,18 @@
 ---
 
-- name: Add always and never to transparent hugepages
+- name: HugePages & C-States(RHEL-3.10,3.12, SUSE-2205917) - Disable Transparent Hugepages & Configure Processor C-States1
   command: "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
 
-- name: Transparent_hugepage update to never and configure processor C-States
+- name: HugePages & C-States(RHEL-3.10,3.12, SUSE-2205917) - Disable Transparent Hugepages & Configure Processor C-States2
   lineinfile: 
      dest: /etc/default/grub 
      regexp: "GRUB_CMDLINE_LINUX=" 
      line: "GRUB_CMDLINE_LINUX='crashkernel=auto  @ vconsole.keymap=us @kernel_arguments: transparent_hugepage=never intel_idle.max_cstate=1 processor.max_cstate=1'"
 
-- name: Modify transparent_hugepage
+- name: HugePages & C-States(RHEL-3.10,3.12, SUSE-2205917) - Disable Transparent Hugepages & Configure Processor C-States3
   command: grub2-mkconfig -o /boot/grub2/grub.cfg
 
-- name: Processes for the SAPSYS
-  copy:
-    dest: /etc/security/limits.d/99-sapsys.conf
-    content: |
-       '@sapsys soft nproc unlimited'
-       '@sapsys hard nproc unlimited'
-
-- name: Disable core dumps for all users 
-  lineinfile:
-    dest: /etc/security/limits.conf
-    line: "{{ item }}"
-  with_items:
-    - '* soft core 0'
-    - '* hard core 0'
-
-- name: Set SWAP space
+- name: SWAP space
   lineinfile:
     dest: /etc/waagent.conf
     regexp: "^{{ item.prop }}="

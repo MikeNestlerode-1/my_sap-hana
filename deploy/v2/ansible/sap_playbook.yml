@@ -9,15 +9,21 @@
   vars_files: 
      - "vars/packages.yml" 
   pre_tasks:
-    - name:
+    - name: Include Hana DB sizes
       include_vars:
         file: ../hdb_sizes.json
         name: hdb_sizes
 
-    - name:
+    - name: Include Output json
       include_vars:
         file: "/home/{{ ansible_user }}/output.json"
         name: output
+
+    - name: Dictionary of Hana
+      set_fact: 
+        hana_database: "{{ item }}"
+      loop: "{{ output.databases|flatten(levels=1) }}"
+      when: item.platform == 'HANA'
   roles:
     - { role: OS_lib_install }
     - { role: OS_disks_preparation }

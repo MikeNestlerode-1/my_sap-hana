@@ -1,12 +1,12 @@
 ---
 
-- name: Installing OS packages
+- name: Install OS packages
   package: 
     name: "{{ item }}" 
     state: present
   with_items: "{{ packages[ansible_os_family] }}"
 
-- name: Installing Hana 2.0 SPS04  packages
+- name: 2593824 - Additional Packages HANA 2 SPS04 
   package:
     name: "{{ item }}"
     state: present
@@ -14,10 +14,10 @@
     - libgcc_s1
     - libstdc++6
     - libatomic1
-  when: output.databases|map(attribute='version')|select('match', ('2.[0-9][0-9].0[4-9][0-9]'))|list 
+  when: hana_database.db_version is regex("2.\d{2}.0([4-9]\d|[0-9]\d{2,})") 
 
-- name: Preconfigured SAP HANA settings
+- name: Settings3.10 - Tweak the Default System Settings for SAP HANA 1 
   command: "saptune solution apply HANA"
 
-- name:  enable tuned profile saptune
+- name: Settings3.10 - Tweak the Default System Settings for SAP HANA 2
   command: "saptune daemon start"
