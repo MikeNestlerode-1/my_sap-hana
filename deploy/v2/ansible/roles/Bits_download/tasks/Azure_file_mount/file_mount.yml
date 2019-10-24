@@ -7,7 +7,8 @@
     force_apt_get: yes
   delegate_to: localhost
  
-- set_fact: 
+- name: Create list of hosts to mount Azure file
+  set_fact: 
      host_list: "['{{ item }}'] + ['localhost']"
   with_items: "{{ groups['hanadbnodes'] }}"
 
@@ -18,12 +19,19 @@
   delegate_to: "{{ item }}"
   with_items: "{{ host_list }}"
 
+- name: Create azure fileshare mount directory
+  file:
+    path: "{{ azure_files_mount_path }}"
+    state: directory
+  delegate_to: "{{ item }}"
+  with_items: "{{ host_list }}"
+
 - name: Create credentials file
   copy:
     content: |
-      username={{ hana_database.software.storage_account_sapbits.name }}
-      password={{ hana_database.software.storage_account_sapbits.storage_access_key }}
-    dest: /etc/smbcredentials/{{ hana_database.storage_acc }}.cred
+      username={{ output.software.storage_account_sapbits.name }}
+      password={{ output.software.storage_account_sapbits.storage_access_key }}
+    dest: /etc/smbcredentials/{{ output.software.storage_account_sapbits.name }}.cred
     mode: 600
   delegate_to: "{{ item }}"
   with_items: "{{ host_list }}"
@@ -32,8 +40,8 @@
   mount:
     path: "{{ azure_files_mount_path }}"
     fstype: cifs
-    opts: "credentials=/etc/smbcredentials/{{ hana_database.software.storage_account_sapbits.name }}.cred,dir_mode=0755,file_mode=0755,serverino,defaults,nofail,vers=3.0"
-    src: "//{{ hana_database.software.storage_account_sapbits.name }}.file.core.windows.net/sapmnt"
+    opts: "credentials=/etc/smbcredentials/{{ output.software.storage_account_sapbits.name }}.cred,dir_mode=0755,file_mode=0755,serverino,defaults,nofail,vers=3.0"
+    src: "//{{ output.software.storage_account_sapbits.name }}.file.core.windows.net/sapmnt"
     state: mounted
   delegate_to: "{{ item }}"
   with_items: "{{ host_list }}"
@@ -54,6 +62,12 @@
     name: beautifulsoup4
     state: latest
     executable: pip3
+  delegate_to: localhost
+
+- name: Create HDB json with SAP bits with credentials
+  template:
+    src: hdb_json.j2 
+    dest: "../python_scripts/downloader/hdb.json"
   delegate_to: localhost
 
 - name: Download bits

@@ -1,6 +1,6 @@
 ---
 
-- name: Create install dir
+- name: Create install directories
   file:
     path: "{{ item }}"
     state: directory
