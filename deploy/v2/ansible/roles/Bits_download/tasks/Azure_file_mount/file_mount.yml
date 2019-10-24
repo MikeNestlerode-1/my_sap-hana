@@ -1,0 +1,73 @@
+---
+
+- name: install packages
+  apt: 
+    name: unzip
+    state: latest
+    force_apt_get: yes
+  delegate_to: localhost
+ 
+- set_fact: 
+     host_list: "['{{item}}'] + ['localhost']"
+  with_items: "{{groups['hanadbnodes']}}"
+
+- name: create azure fileshare credentials directory
+  file:
+    path: "/etc/smbcredentials"
+    state: directory
+  delegate_to: "{{ item }}"
+  with_items: "{{ host_list }}"
+
+- name: create credentials file
+  copy:
+    content: |
+      username={{ hana_database.storage_acc }}
+      password={{ hana_database.storage_acc_password }}
+    dest: /etc/smbcredentials/{{ hana_database.storage_acc }}.cred
+    mode: 600
+  delegate_to: "{{ item }}"
+  with_items: "{{ host_list }}"
+
+- name: mount the storage account on server
+  mount:
+    path: "{{ azure_files_mount_path }}"
+    fstype: cifs
+    opts: "credentials=/etc/smbcredentials/{{ hana_database.storage_acc }}.cred,dir_mode=0777,file_mode=0777,serverino,defaults,nofail,vers=3.0"
+    src: "//{{ hana_database.storage_acc }}.file.core.windows.net/sapmnt"
+    state: mounted
+  delegate_to: "{{ item }}"
+  with_items: "{{ host_list }}"
+
+- name: Download pip
+  get_url:
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: /usr/bin/get-pip.py
+  delegate_to: localhost
+
+- name: Install Pip
+  command: |
+    python3 /usr/bin/get-pip.py
+  delegate_to: localhost
+
+- name: Install beautifulsoup4
+  pip:
+    name: beautifulsoup4
+    state: latest
+    executable: pip3
+  delegate_to: localhost
+
+- name: download bits
+  shell: "python3 ../python_scripts/downloader/basket.py --config ../python_scripts/downloader/hdb.json --dir {{ azure_files_mount_path }}"
+  delegate_to: localhost
+
+- name: bits zipfile name
+  command: "ls {{ azure_files_mount_path }}/DB"
+  register: bits_file
+  delegate_to: localhost
+
+- name: unzip bits downlaod file
+  unarchive: 
+    src: "{{ azure_files_mount_path }}/DB/{{bits_file.stdout}}"
+    dest: "{{ azure_files_mount_path }}/DB"
+    remote_src: yes
+  delegate_to: localhost 

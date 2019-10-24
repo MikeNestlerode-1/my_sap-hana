@@ -1,0 +1,5 @@
+---
+
+- name: Azure file mount
+  include_tasks: "Azure_file_mount/file_mount.yml"
+  when: hana_database.bits_storage_type == 'Azure_file'

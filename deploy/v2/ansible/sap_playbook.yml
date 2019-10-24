@@ -6,6 +6,9 @@
   vars:
     disk_dict: {}
     start: 0
+    azure_files_mount_path: "/mnt/{{ hana_database.storage_acc }}"
+    hana_install_path: "/hana/shared/install"
+    hana_software_loc: "/mnt/{{ hana_database.storage_acc }}/DB/DATA_UNITS/HDB_SERVER_LINUX_X86_64"
   vars_files: 
      - "vars/packages.yml" 
   pre_tasks:
@@ -27,3 +30,5 @@
   roles:
     - { role: OS_lib_install }
     - { role: OS_disks_preparation }
+    - { role: Bits_download }
+    - { role: Sap_hana_install }
