@@ -36,6 +36,7 @@ packages:
       - ntpdate
       - tuned-profiles-sap-hana
       - numad
+      - cifs-utils
 
     Suse: 
       - libyui-qt-pkg7
