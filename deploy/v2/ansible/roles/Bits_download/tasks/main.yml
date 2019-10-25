@@ -1,5 +1,0 @@
----
-
-- name: Azure file mount
-  include_tasks: "Azure_file_mount/file_mount.yml"
-  when: output.software.storage_account_sapbits.container_name == 'bits'
