@@ -20,7 +20,7 @@
     dest: /usr/bin/get-pip.py
   delegate_to: localhost
 
-- name: Install Pip
+- name: Install pip
   command: |
     python3 /usr/bin/get-pip.py
   delegate_to: localhost
@@ -38,7 +38,7 @@
     dest: "../python_scripts/downloader/hdb.json"
   delegate_to: localhost
 
-- name: Download bits
+- name: Download installation media
   shell: "python3 ../python_scripts/downloader/basket.py --config ../python_scripts/downloader/hdb.json --dir {{ azure_files_mount_path }}"
   delegate_to: localhost
 
@@ -47,7 +47,7 @@
   register: bits_file
   delegate_to: localhost
 
-- name: Unzip media archive
+- name: Extract media archive
   unarchive: 
     src: "{{ azure_files_mount_path }}/DB/{{bits_file.stdout}}"
     dest: "{{ azure_files_mount_path }}/DB"
