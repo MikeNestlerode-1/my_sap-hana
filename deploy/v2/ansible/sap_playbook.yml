@@ -30,3 +30,4 @@
   roles:
     - { role: sap-media-download }
     - { role: sap-hana-install }
+    - { role: sap-components-install }
