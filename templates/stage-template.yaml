@@ -3,8 +3,9 @@ parameters:
 
 stages:
 - stage:
-    jobs:
+  jobs:
+  - ${{each p in parameters.param}}:
     - job: test
       steps:
-        - ${{each p in parameters.param}}:
-          - script: 'echo ${{ p }}'
+        - script: 'echo ${{ p }}'
+      displayName: 'test'
