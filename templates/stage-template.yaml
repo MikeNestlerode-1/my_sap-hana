@@ -1,0 +1,10 @@
+parameters:
+  param: []
+
+stages:
+- stage:
+  jobs:
+  - job: test
+    steps:
+    - ${{each p in parameters.param}}:
+      - script: 'echo ${{ p }}'
