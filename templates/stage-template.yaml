@@ -9,16 +9,16 @@ jobs:
       testcase: $(scenario)-$(Build.BuildId)
     steps:
     - script: 'echo ${{ p }}'
-    - template: templates/update-place-holder.yaml
+    - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
         testCaseName: $(testcase)
         placeHolder: var-rg-name
         value: $(testcase)
-    - template: templates/terraform-deployment-steps.yaml
+    - template: terraform-deployment-steps.yaml
       parameters:
         testCaseName: $(testcase)
-    - template: templates/ansible-deployment-steps.yaml
+    - template: ansible-deployment-steps.yaml
       parameters:
         testCaseName: $(testcase)
     displayName: 'job ${{p}}'
@@ -31,22 +31,22 @@ jobs:
         az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
         az group create --location eastus -n $(testcase)
         echo '##vso[task.setvariable variable=arm_id]$(az group show --name $(testcase) --query id --output tsv)'
-    - template: templates/update-place-holder.yaml
+    - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
         testCaseName: $(testcase)
         placeHolder: var-rg-name
         value: $(testcase)
-    - template: templates/update-place-holder.yaml
+    - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
         testCaseName: $(testcase)
         placeHolder: rg-arm-id
         value: $(arm_id)
-    - template: templates/terraform-deployment-steps.yaml
+    - template: terraform-deployment-steps.yaml
       parameters:
         testCaseName: $(testcase)
-    - template: templates/ansible-deployment-steps.yaml
+    - template: ansible-deployment-steps.yaml
       parameters:
         testCaseName: $(testcase)
   - job: reuseVnet
@@ -58,22 +58,22 @@ jobs:
     - script: |
         az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
         echo '##vso[task.setvariable variable=arm_id]$(az network vnet show --resource-group v2-allNew-$(Build.BuildId) --name vnet-mgmt --query id --output tsv)'
-    - template: templates/update-place-holder.yaml
+    - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
         testCaseName: $(testcase)
         placeHolder: var-rg-name
         value: $(testcase)
-    - template: templates/update-place-holder.yaml
+    - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
         testCaseName: $(testcase)
         placeHolder: vnet-arm-id
         value: $(arm_id)
-    - template: templates/terraform-deployment-steps.yaml
+    - template: terraform-deployment-steps.yaml
       parameters:
         testCaseName: $(testcase)
-    - template: templates/ansible-deployment-steps.yaml
+    - template: ansible-deployment-steps.yaml
       parameters:
         testCaseName: $(testcase)
   - job: reuseNSG
@@ -85,22 +85,22 @@ jobs:
     - script: |
         az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
         echo '##vso[task.setvariable variable=arm_id]$(az network nsg show --resource-group v2-allNew-$(Build.BuildId) --name nsg-mgmt --query id --output tsv)' 
-    - template: templates/update-place-holder.yaml
+    - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
         testCaseName: $(testcase)
         placeHolder: var-rg-name
         value: $(testcase)
-    - template: templates/update-place-holder.yaml
+    - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
         testCaseName: $(testcase)
         placeHolder: nsg-arm-id
         value: $(arm_id)
-    - template: templates/terraform-deployment-steps.yaml
+    - template: terraform-deployment-steps.yaml
       parameters:
         testCaseName: $(testcase)
-    - template: templates/ansible-deployment-steps.yaml
+    - template: ansible-deployment-steps.yaml
       parameters:
         testCaseName: $(testcase)
   - job: test_${{p}}
