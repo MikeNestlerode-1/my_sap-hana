@@ -5,6 +5,6 @@ stages:
 - stage:
     jobs:
     - job: test
-      - ${{each p in parameters.param}}:
-        steps:
+      steps:
+        - ${{each p in parameters.param}}:
           - script: 'echo ${{ p }}'
