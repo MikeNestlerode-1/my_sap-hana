@@ -8,4 +8,4 @@ stages:
     - job: test
       steps:
         - script: 'echo ${{ p }}'
-      displayName: 'test'
+      displayName: 'job ${{p}}'
