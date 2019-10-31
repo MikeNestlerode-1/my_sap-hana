@@ -42,9 +42,10 @@ stages:
 # - reuseNSG: it only reuses an existing NSG from createAllNew      #
 #####################################################################
 - stage: TestLoop
-- template: templates/stage-template.yaml
-  parameters:
-    param: ["a","b"]
+  jobs:
+  - template: templates/stage-template.yaml
+    parameters:
+      param: ["a","b"]
 - stage: CreatingResources
   dependsOn: SetEnv
   jobs:
