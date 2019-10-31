@@ -41,10 +41,11 @@ stages:
 # - reuseVnet: it only reuses an existing vnet from createAllNew    #
 # - reuseNSG: it only reuses an existing NSG from createAllNew      #
 #####################################################################
-- stage: testLoop
-- template: templates/stage-template.yaml
-  parameters:
-    param: ["a","b"]
+- stage: TestLoop
+  jobs:
+  - template: templates/stage-template.yaml
+    parameters:
+      param: ["a","b"]
 - stage: CreatingResources
   dependsOn: SetEnv
   jobs:
