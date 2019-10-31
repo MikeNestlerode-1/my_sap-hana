@@ -46,12 +46,22 @@ stages:
   - template: templates/stage-template.yaml
     parameters:
       param: [
-        "{\"offer\": \"SLES-SAP\", 
-          \"publisher\": \"SUSE\", 
-          \"sku\": \"12-sp2\"}",
-          "{\"offer\": \"SLES-SAP\", 
-          \"publisher\": \"SUSE\", 
-          \"sku\": \"12-sp2\"}",
+        "{
+            \"os_version\": \"SLES\",
+            \"os\": {
+              \"offer\": \"SLES-SAP\", 
+              \"publisher\": \"SUSE\", 
+              \"sku\": \"12-sp2\"
+            }
+          }",
+        "{
+            \"os_version\": \"RHEL\",
+            \"os\": {
+              \"offer\": \"SLES-SAP\", 
+              \"publisher\": \"SUSE\", 
+              \"sku\": \"12-sp2\"
+            }
+          }",
         ]
 - stage: CreatingResources
   dependsOn: SetEnv

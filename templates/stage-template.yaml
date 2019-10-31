@@ -3,12 +3,12 @@ parameters:
 
 jobs:
 - ${{each p in parameters.param}}:
-  - job: createAllNew_${{p}}
+  - job: createAllNew_${{p.os_version}}
     variables:
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
     steps:
-    - script: 'echo ${{ p }}'
+    - script: 'echo ${{ p.os_version }}'
     - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
