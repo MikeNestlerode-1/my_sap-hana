@@ -3,26 +3,8 @@ parameters:
 
 stages:
 - stage:
-  jobs:
   - ${{each p in parameters.param}}:
-    - job: createAllNew
-      variables:
-        scenario: v2-allNew
-        testcase: $(scenario)-$(Build.BuildId)
-      steps:
-      - script: 'echo ${{ p }}'
-      - template: templates/update-place-holder.yaml
-        parameters:
-          scenario: $(scenario)
-          testCaseName: $(testcase)
-          placeHolder: var-rg-name
-          value: $(testcase)
-      - template: templates/terraform-deployment-steps.yaml
-        parameters:
-          testCaseName: $(testcase)
-      - template: templates/ansible-deployment-steps.yaml
-        parameters:
-          testCaseName: $(testcase)
+    jobs:  
     - job: test_${{p}}
       steps:
         - script: 'echo ${{ p }}'
