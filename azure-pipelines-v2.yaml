@@ -54,7 +54,7 @@ stages:
   - job: RHEL7
     - template: templates/stage-template.yaml
       parameters:
-        osVersion: "SLES12"
+        osVersion: "RHEL7"
         osImage: '\"offer\": \"RHEL\", 
                   \"publisher\": \"RedHat\", 
                   \"sku\": \"7-LVM\"'
