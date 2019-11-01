@@ -46,17 +46,17 @@ stages:
   - template: templates/stage-template.yaml
     parameters:
       osVersion: "SLES12"
-      osImage: "\"offer\": \"SLES-SAP\", 
-                \"publisher\": \"SUSE\", 
-                \"sku\": \"12-sp2\""
+      osImage: """offer"": ""SLES-SAP"", 
+                ""publisher"": ""SUSE"", 
+                ""sku"": ""12-sp2""
 - stage: RHEL7
   jobs:
   - template: templates/stage-template.yaml
     parameters:
       osVersion: "SLES12"
-      osImage: "\"offer\": \"RHEL\", 
-                \"publisher\": \"RedHat\", 
-                \"sku\": \"7-LVM\""
+      osImage: """offer"": ""RHEL"", 
+                ""publisher"": ""RedHat"", 
+                ""sku"": ""7-LVM"""
 - stage: CreatingResources
   dependsOn: SetEnv
   jobs:
