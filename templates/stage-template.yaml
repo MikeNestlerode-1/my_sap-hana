@@ -4,7 +4,7 @@ parameters:
             { "id": 1, "a": "avalue1"},
             { "id": 2, "a": "avalue2"},
             { "id": 3, "a": "avalue3"}
-          ]
+      ]
 
 jobs:
 - ${{ each os in parameters.osList }}:
@@ -14,7 +14,7 @@ jobs:
       testcase: $(scenario)-$(Build.BuildId)
     steps:
     - script: |
-        echo $(a.*.id)
+        echo ${{a.*.id}}
     - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
