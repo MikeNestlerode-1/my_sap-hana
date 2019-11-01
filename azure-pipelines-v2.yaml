@@ -45,18 +45,14 @@ stages:
   jobs:
   - template: templates/stage-template.yaml
     parameters:
-      osList:
-      - key: "SLES12"
-        value: "{
+      osList: [
+        "{
+          \"osVersion\": \"SLES12\",
+          \"osImage\": {
             \"offer\": \"SLES-SAP\", 
             \"publisher\": \"SUSE\", 
             \"sku\": \"12-sp2\"
-          }"
-      - key: "RHEL7"
-        value: "{
-            \"offer\": \"SLES-SAP\", 
-            \"publisher\": \"SUSE\", 
-            \"sku\": \"12-sp2\"
+            }
           }"
 - stage: CreatingResources
   dependsOn: SetEnv
