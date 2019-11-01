@@ -54,6 +54,7 @@ stages:
             \"sku\": \"12-sp2\"
             }
           }"
+      ]
 - stage: CreatingResources
   dependsOn: SetEnv
   jobs:
