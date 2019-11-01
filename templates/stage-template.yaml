@@ -5,7 +5,7 @@ jobs:
 - ${{ each os in parameters.osList }}:
   - job: createAllNew${{os}}
     variables:
-      image: ${{ variables.SLES12 }}
+      image: variables.${{os}}
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
     - template: variables/os-version.yml
