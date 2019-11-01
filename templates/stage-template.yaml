@@ -1,7 +1,7 @@
 parameters:
   osList: []
 
-${{ each os in parameters.osList }}:
+- ${{ each os in parameters.osList }}:
   - job: createAllNew
     variables:
       scenario: v2-allNew
