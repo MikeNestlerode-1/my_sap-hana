@@ -43,7 +43,6 @@ stages:
 #####################################################################
 - stage: TestLoop
   jobs:
-  - template: templates/stage-template.yaml
     parameters:
       osList:
       - key: "SLES12"
@@ -58,6 +57,26 @@ stages:
             \"publisher\": \"SUSE\", 
             \"sku\": \"12-sp2\"
           }"
+    - ${{ each os in parameters.osList }}:
+      - job: createAllNew${{os.key}}
+        variables:
+          scenario: v2-allNew
+          testcase: $(scenario)-$(Build.BuildId)
+        steps:
+        - script: 'echo ${{os.value}}'
+        - template: update-place-holder.yaml
+          parameters:
+            scenario: $(scenario)
+            testCaseName: $(testcase)
+            placeHolder: var-rg-name
+            value: $(testcase)
+        - template: terraform-deployment-steps.yaml
+          parameters:
+            testCaseName: $(testcase)
+        - template: ansible-deployment-steps.yaml
+          parameters:
+            testCaseName: $(testcase)
+        displayName: 'job ${{os.key}}'
 - stage: CreatingResources
   dependsOn: SetEnv
   jobs:
