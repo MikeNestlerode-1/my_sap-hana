@@ -5,6 +5,7 @@
   become_user: root
   vars:
     disk_dict: {}
+    hana_components: ['server']
     start: 0
     azure_files_mount_path: "/sapmnt"
     hana_install_path: "/hana/shared/install"
@@ -28,5 +29,5 @@
       loop: "{{ output.databases|flatten(levels=1) }}"
       when: item.platform == 'HANA'
   roles:
-    - { role: sap-media-download }
+#    - { role: sap-media-download }
     - { role: sap-hana-install }

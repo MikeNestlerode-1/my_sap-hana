@@ -1,6 +1,6 @@
 ---
 
-# Install HANA database
+# Install HANA database and XSA Components
 
 - name: Create install directories
   file:
@@ -9,6 +9,18 @@
   with_items:
     - "{{ hana_install_path }}"
     - "{{ hana_install_path }}/SAP_HANA_DATABASE"
+
+- name: Create SAP components list  
+  set_fact: 
+    hana_components: "{{ hana_components }} + ['xs']"
+  loop: "{{ hana_database.components|flatten(levels=1) }}"
+  when: item.name == 'XSA'
+
+- name: Create dictionary with XSA inforamtion from output.JSON
+  set_fact:
+    xsa: "{{ item }}"
+  loop: "{{ hana_database.components|flatten(levels=1) }}"
+  when: item.name == 'XSA'
 
 - name: Create install template for SAP HANA 1.0
   template:
@@ -27,7 +39,7 @@
     src: hdbserver_passwords.j2
     dest: "{{ hana_install_path }}/hdbserver_{{ hana_database.instance.sid }}_passwords.xml"
 
-- name: Install HANA DB using hdblcm
-  shell: "pwd=$(<../hdbserver_{{ hana_database.instance.sid }}_passwords.xml); rm ../hdbserver_{{ hana_database.instance.sid }}_passwords.xml; echo $pwd | {{ hana_software_loc }}/hdblcm --batch --action=install --configfile='../hdbserver_{{ hana_database.instance.sid }}_install.cfg' --read_password_from_stdin=xml"
+- name: Install HANA DB and XSA using hdblcm
+  shell: "pwd=$(<../hdbserver_{{ hana_database.instance.sid }}_passwords.xml); echo $pwd | {{ hana_software_loc }}/hdblcm --sid={{ hana_database.instance.sid }} --batch --action=install --configfile='../hdbserver_{{ hana_database.instance.sid }}_install.cfg' --read_password_from_stdin=xml"
   args:
     chdir: "{{ hana_install_path }}/SAP_HANA_DATABASE"

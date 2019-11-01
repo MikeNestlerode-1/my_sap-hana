@@ -43,7 +43,7 @@
   delegate_to: localhost
 
 - name: Identify media archive
-  command: "ls {{ azure_files_mount_path }}/DB"
+  shell: "ls {{ azure_files_mount_path }}/DB|grep ZIP"
   register: bits_file
   delegate_to: localhost
 
