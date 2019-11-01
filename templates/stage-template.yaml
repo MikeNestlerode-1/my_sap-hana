@@ -1,8 +1,16 @@
 parameters:
   osVersion: ''
   osImage: ''
+  oslist: [
+    {"sles12": "aaa"},
+    {"rhel7": "bbb"}
+  ]
 
 jobs:
+- ${{each p in parameters.oslist}}:
+- job:
+  steps:
+  - script: echo {{$p}}
 - job: createAllNew${{parameters.osVersion}}
   variables:
     scenario: v2-allNew
