@@ -74,18 +74,29 @@ stages:
     steps:
       - script: |
           az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
-          rg_list=(
-            v2-allNew-$(Build.BuildId) 
-            v2-reuseRG-$(Build.BuildId) 
-            v2-reuseVNET-$(Build.BuildId) 
-            v2-reuseNSG-$(Build.BuildId)
+          os_list=(
+            SLES12
+            RHEL7
           )
+          scenario_list=(
+            v2-allNew
+            v2-reuseRG
+            v2-reuseVNET
+            v2-reuseNSG
+          )
+          for scenario in "${scenario_list[@]}"
+          do
+            for os in "${os_list[@]}"
+            do
+              rg_list+=("${scenario}-${os}-$(Build.BuildId))
+            done
+          done
           for rg in "${rg_list[@]}"
           do
+            echo $rg
             if $(az group exists -n $rg); then
               az group update --resource-group $rg --set tags.Delete=True
               az group delete -n $rg --no-wait -y
-              echo $rg
             fi
           done
         displayName: 'Clean up'
