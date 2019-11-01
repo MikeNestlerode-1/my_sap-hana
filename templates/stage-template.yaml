@@ -8,7 +8,7 @@ jobs:
     - template: variables/os-version.yml
       parameters:
         osName: ${{os}}
-      image: ${{ variables.##vso[task.setvariable variable=os] }}
+      image: ${{ variables.SLES12 }}
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
     steps:
