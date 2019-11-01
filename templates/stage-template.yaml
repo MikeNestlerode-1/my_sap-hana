@@ -8,7 +8,7 @@ jobs:
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
     steps:
-    - script: echo p.os_version
+    - script: echo json(${{p}}).os_version
     - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
