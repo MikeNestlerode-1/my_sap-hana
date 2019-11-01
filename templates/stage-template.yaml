@@ -5,8 +5,8 @@ parameters:
 jobs:
 - job: createAllNew${{parameters.osVersion}}
   variables:
-    scenario: v2-allNew-${{parameters.osVersion}}
-    testcase: $(scenario)-$(Build.BuildId)
+    scenario: v2-allNew
+    testcase: $(scenario)-${{parameters.osVersion}}-$(Build.BuildId)
   steps:
   - template: update-place-holder.yaml
     parameters:
