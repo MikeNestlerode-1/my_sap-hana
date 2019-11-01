@@ -57,7 +57,7 @@ jobs:
   steps:
   - script: |
       az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
-      echo '##vso[task.setvariable variable=arm_id]$(az network vnet show --resource-group v2-allNew-$(Build.BuildId) --name vnet-mgmt --query id --output tsv)'
+      echo '##vso[task.setvariable variable=arm_id]$(az network vnet show --resource-group v2-allNew-${{parameters.osVersion}}-$(Build.BuildId) --name vnet-mgmt --query id --output tsv)'
   - template: update-place-holder.yaml
     parameters:
       scenario: $(scenario)
@@ -85,7 +85,7 @@ jobs:
   steps:
   - script: |
       az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
-      echo '##vso[task.setvariable variable=arm_id]$(az network nsg show --resource-group v2-allNew-$(Build.BuildId) --name nsg-mgmt --query id --output tsv)' 
+      echo '##vso[task.setvariable variable=arm_id]$(az network nsg show --resource-group v2-allNew-${{parameters.osVersion}}-$(Build.BuildId) --name nsg-mgmt --query id --output tsv)' 
   - template: update-place-holder.yaml
     parameters:
       scenario: $(scenario)
