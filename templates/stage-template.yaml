@@ -1,5 +1,10 @@
 parameters:
   osList: []
+  a: [
+            { "id": 1, "a": "avalue1"},
+            { "id": 2, "a": "avalue2"},
+            { "id": 3, "a": "avalue3"}
+          ]
 
 jobs:
 - ${{ each os in parameters.osList }}:
@@ -7,11 +12,6 @@ jobs:
     variables:
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
-      a: [
-            { "id": 1, "a": "avalue1"},
-            { "id": 2, "a": "avalue2"},
-            { "id": 3, "a": "avalue3"}
-          ]
     steps:
     - script: |
         echo $(a.*.id)
