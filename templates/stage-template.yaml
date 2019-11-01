@@ -1,16 +1,15 @@
 parameters:
-  param: []
+  osVersions: []
+  osDetails: []
 
 jobs:
-- ${{each p in parameters.param}}:
-  - job: 
+- ${{each os in parameters.osVersions}}:
+  - job: createAllNew${{os}}
     variables:
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
     steps:
-    - script: |
-        echo "${{ p }}"
-        echo "${{ p }}.os_version"
+    - script: 'echo ${{}}'
     - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)

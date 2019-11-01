@@ -45,23 +45,21 @@ stages:
   jobs:
   - template: templates/stage-template.yaml
     parameters:
-      param: [
-        "json(\"{
-            \"os_version\": \"SLES\",
-            \"os\": {
-              \"offer\": \"SLES-SAP\", 
-              \"publisher\": \"SUSE\", 
-              \"sku\": \"12-sp2\"
-            }
-          }\")",
-        "json(\"{
-            \"os_version\": \"RHEL\",
-            \"os\": {
-              \"offer\": \"SLES-SAP\", 
-              \"publisher\": \"SUSE\", 
-              \"sku\": \"12-sp2\"
-            }
-          }\")",
+      osVersions: [
+        "SLES12",
+        "RHEL7",
+      ]
+      osDetails: [
+        "{
+            \"offer\": \"SLES-SAP\", 
+            \"publisher\": \"SUSE\", 
+            \"sku\": \"12-sp2\"
+          }",
+        "{
+            \"offer\": \"SLES-SAP\", 
+            \"publisher\": \"SUSE\", 
+            \"sku\": \"12-sp2\"
+          }",
         ]
 - stage: CreatingResources
   dependsOn: SetEnv
