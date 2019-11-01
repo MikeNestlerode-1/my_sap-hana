@@ -1,12 +1,25 @@
 parameters:
   osList: []
-  a: [
-            { "id": 1, "a": "avalue1"},
-            { "id": 2, "a": "avalue2"},
-            { "id": 3, "a": "avalue3"}
-      ]
 
 jobs:
-- ${{ each id in parameters.a.*.id }}:
-  - job: ${{id}}
-    displayName: ${{a.*.a}}
+- ${{ each os in parameters.osList }}:
+  - job: createAllNew${{os}}
+    variables:
+    - template: variables/os-version.yml
+      scenario: v2-allNew
+      testcase: $(scenario)-$(Build.BuildId)
+      image: ${{ variables.${{os}} }}
+    steps:
+    - template: update-place-holder.yaml
+      parameters:
+        scenario: $(scenario)
+        testCaseName: $(testcase)
+        placeHolder: var-rg-name
+        value: $(testcase)
+    - template: terraform-deployment-steps.yaml
+      parameters:
+        testCaseName: $(testcase)
+    - template: ansible-deployment-steps.yaml
+      parameters:
+        testCaseName: $(testcase)
+    displayName: 'job ${{os}}'

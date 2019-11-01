@@ -46,14 +46,8 @@ stages:
   - template: templates/stage-template.yaml
     parameters:
       osList: [
-        "{
-          \"osVersion\": \"SLES12\",
-          \"osImage\": {
-            \"offer\": \"SLES-SAP\", 
-            \"publisher\": \"SUSE\", 
-            \"sku\": \"12-sp2\"
-            }
-          }"
+        "SLES12",
+        "RHEL7"
       ]
 - stage: CreatingResources
   dependsOn: SetEnv

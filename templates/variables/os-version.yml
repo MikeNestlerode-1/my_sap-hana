@@ -1,0 +1,13 @@
+variables:
+- name: SLES12
+  value: "{
+            \"offer\": \"SLES-SAP\", 
+            \"publisher\": \"SUSE\", 
+            \"sku\": \"12-sp2\"
+          }"
+- name: RHEL7
+  value: "{
+            \"offer\": \"RHEL-SAP\", 
+            \"publisher\": \"RedHat\", 
+            \"sku\": \"7\"
+          }"
