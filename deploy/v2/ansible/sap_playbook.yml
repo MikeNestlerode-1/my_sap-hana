@@ -29,5 +29,5 @@
       loop: "{{ output.databases|flatten(levels=1) }}"
       when: item.platform == 'HANA'
   roles:
-#    - { role: sap-media-download }
+    - { role: sap-media-download }
     - { role: sap-hana-install }
