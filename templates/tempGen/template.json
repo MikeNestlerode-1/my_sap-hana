@@ -115,7 +115,7 @@
     {
       "platform": "HANA",
       "db_version": "2.00.043",
-      "os": {"var-os-image"},
+      "os": {var-os-image},
       "size": "Demo",
       "filesystem": "xfs",
       "high_availability": false,
