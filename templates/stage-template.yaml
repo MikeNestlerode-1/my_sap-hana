@@ -7,7 +7,7 @@ jobs:
     variables:
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
-      a: $[counter(format('{0:yyyyMMdd}', pipeline.startTime), 100)]
+      a: $[json("{}")]
     steps:
     - script: |
         echo $(a)
