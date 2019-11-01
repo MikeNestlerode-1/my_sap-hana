@@ -9,7 +9,9 @@ jobs:
       testcase: $(scenario)-$(Build.BuildId)
       osJSON: $[json(${{os}})]
     steps:
-    - script: 'echo $(osJSON)'
+    - script: |
+        'echo ${{os}}'
+        'echo $(osJSON)'
     - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
@@ -22,4 +24,4 @@ jobs:
     - template: ansible-deployment-steps.yaml
       parameters:
         testCaseName: $(testcase)
-    displayName: 'job ${{p}}'
+    displayName: 'job ${{os}}'
