@@ -14,7 +14,7 @@ jobs:
       testcase: $(scenario)-$(Build.BuildId)
     steps:
     - script: |
-        echo ${{a.*.id}}
+        format('echo {0} ', a.*.id)
     - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
