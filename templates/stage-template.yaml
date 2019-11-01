@@ -1,7 +1,6 @@
 parameters:
-  osList:
+  osList: {}
 
-jobs:
 - ${{ each os in parameters.osList }}:
   - job: createAllNew${{os.key}}
     variables:
