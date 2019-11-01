@@ -1,7 +1,8 @@
 parameters:
   osVersion: ''
   osImage: ''
-  
+
+jobs:
 - job: createAllNew${{parameters.osVersion}}
   variables:
     scenario: v2-allNew
