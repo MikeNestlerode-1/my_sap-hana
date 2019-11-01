@@ -41,14 +41,14 @@ stages:
 # - reuseVnet: it only reuses an existing vnet from createAllNew    #
 # - reuseNSG: it only reuses an existing NSG from createAllNew      #
 #####################################################################
-- stage: TestLoop
+- stage: susetest
   jobs:
   - template: templates/stage-template.yaml
     parameters:
-      osList: [
-        "SLES12",
-        "RHEL7"
-      ]
+      osVersion: "SLES12"
+      osImage: "\"offer\": \"SLES-SAP\", 
+                \"publisher\": \"SUSE\", 
+                \"sku\": \"12-sp2\""
 - stage: CreatingResources
   dependsOn: SetEnv
   jobs:

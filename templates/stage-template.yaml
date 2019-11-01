@@ -1,32 +1,23 @@
 parameters:
-  osList: []
+  osVersion: ''
   osImage: ''
-  osMapping:
-    - key: SLES12
-      value: "suse"
-    - key: RHEL7
-      value: "redhat"
 
 jobs:
-- ${{ each os in parameters.osList }}:
-    ${{ if eq(osMapping.key, os) }}:
-      ${{ osImage }}: ${{ osMapping.value }}
-  - job: createAllNew${{os}}
-    variables:
-      scenario: v2-allNew
-      testcase: $(scenario)-$(Build.BuildId)
-    steps:
-    - script: echo ${{ osImage }}
-    - template: update-place-holder.yaml
-      parameters:
-        scenario: $(scenario)
-        testCaseName: $(testcase)
-        placeHolder: var-rg-name
-        value: $(testcase)
-    - template: terraform-deployment-steps.yaml
-      parameters:
-        testCaseName: $(testcase)
-    - template: ansible-deployment-steps.yaml
-      parameters:
-        testCaseName: $(testcase)
-    displayName: 'job ${{os}}'
+- job: createAllNew${{parameters.osVersion}}
+  variables:
+    scenario: v2-allNew-${{parameters.osVersion}}
+    testcase: $(scenario)-$(Build.BuildId)
+  steps:
+  - template: update-place-holder.yaml
+    parameters:
+      scenario: $(scenario)
+      testCaseName: $(testcase)
+      placeHolder: var-rg-name
+      value: $(testcase)
+  - template: terraform-deployment-steps.yaml
+    parameters:
+      testCaseName: $(testcase)
+      osImage: ${{parameters.osImage}}
+  - template: ansible-deployment-steps.yaml
+    parameters:
+      testCaseName: $(testcase)
