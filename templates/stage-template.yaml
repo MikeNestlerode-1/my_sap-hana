@@ -6,9 +6,11 @@ jobs:
   - job: createAllNew${{os}}
     variables:
     - template: variables/os-version.yml
+      parameters:
+        osName: ${{os}}
+      image: ${{ variables.${{parameters.osName}} }}
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
-      image: ${{ variables.$(os) }}
     steps:
     - template: update-place-holder.yaml
       parameters:
