@@ -22,7 +22,4 @@ jobs:
       parameters:
         testCaseName: $(testcase)
     displayName: 'job ${{p}}'
-  - job: test_${{p}}
-    steps:
-      - script: 'echo ${{ p }}'
-    displayName: 'job ${{p}}'
+    
