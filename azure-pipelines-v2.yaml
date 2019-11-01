@@ -56,7 +56,7 @@ stages:
       osVersion: "SLES12"
       osImage: '\"offer\": \"RHEL\", 
                 \"publisher\": \"RedHat\", 
-                \"sku\": \"7-LVM\"''
+                \"sku\": \"7-LVM\"'
 - stage: CreatingResources
   dependsOn: SetEnv
   jobs:
