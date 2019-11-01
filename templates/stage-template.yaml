@@ -9,7 +9,7 @@ parameters:
 
 jobs:
 - ${{ each os in parameters.osList }}:
-    ${{ if ne(osMapping.key, os) }}:
+    ${{ if eq(osMapping.key, os) }}:
       ${{ osImage }}: ${{ osMapping.value }}
   - job: createAllNew${{os}}
     variables:
