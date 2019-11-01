@@ -8,12 +8,12 @@ parameters:
 
 jobs:
 - ${{ each os in parameters.osList }}:
-  - job: createAllNew$(os)
+  - job: createAllNew${{os}}
     variables:
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
     steps:
-    - script: echo osMapping[$(os)]
+    - script: echo osMapping[${{os}}]
     - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
