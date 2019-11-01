@@ -1,5 +1,17 @@
 parameters:
-  osList: []
+  osList:
+  - key: "SLES12"
+    value: "{
+        \"offer\": \"SLES-SAP\", 
+        \"publisher\": \"SUSE\", 
+        \"sku\": \"12-sp2\"
+      }"
+  - key: "RHEL7"
+    value: "{
+        \"offer\": \"SLES-SAP\", 
+        \"publisher\": \"SUSE\", 
+        \"sku\": \"12-sp2\"
+      }"
 
 - ${{ each os in parameters.osList }}:
   - job: createAllNew${{os.key}}
