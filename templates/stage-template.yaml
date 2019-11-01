@@ -1,17 +1,19 @@
 parameters:
   osList: []
+  osMapping:
+    - key: SLES12
+      value: "suse"
+    - key: RHEL7
+      value: "redhat"
 
 jobs:
 - ${{ each os in parameters.osList }}:
-  - job: createAllNew${{os}}
+  - job: createAllNew$(os)
     variables:
-      image: variables.${{os}}
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
-    - template: variables/os-version.yml
-      parameters:
-        osName: ${{os}}      
     steps:
+    - script: echo osMapping[$(os)]
     - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
