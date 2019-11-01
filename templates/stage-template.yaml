@@ -7,11 +7,10 @@ jobs:
     variables:
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
-      osJSON: ${{ json(${{p}}) }}
     steps:
     - script: |
-        echo "$(osJSON)"
-        echo "$(osJSON).os_version"
+        echo "${{ p }}"
+        echo "${{ p }}.os_version"
     - template: update-place-holder.yaml
       parameters:
         scenario: $(scenario)
