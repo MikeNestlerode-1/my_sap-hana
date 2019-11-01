@@ -13,7 +13,7 @@ parameters:
         \"sku\": \"12-sp2\"
       }"
 
-- ${{ each os in parameters.osList }}:
+${{ each os in parameters.osList }}:
   - job: createAllNew${{os.key}}
     variables:
       scenario: v2-allNew
