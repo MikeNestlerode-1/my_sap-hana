@@ -88,7 +88,7 @@ stages:
           do
             for os in "${os_list[@]}"
             do
-              rg_list+=("${scenario}-${os}-$(Build.BuildId))
+              rg_list+=("${scenario}-${os}-$(Build.BuildId)")
             done
           done
           for rg in "${rg_list[@]}"
