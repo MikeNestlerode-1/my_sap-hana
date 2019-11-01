@@ -7,7 +7,7 @@ jobs:
     variables:
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
-      osJSON: ${{json(${{p}})}}
+      osJSON: ${{json($(p))}}
     steps:
     - script: |
         echo "$(osJSON)"
