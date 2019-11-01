@@ -45,19 +45,19 @@ stages:
   dependsOn: SetEnv
   jobs:
   - job: SLES12
-    - template: templates/stage-template.yaml
-      parameters:
-        osVersion: "SLES12"
-        osImage: '\"offer\": \"SLES-SAP\", 
-                  \"publisher\": \"SUSE\", 
-                  \"sku\": \"12-sp2\"'
+  - template: templates/stage-template.yaml
+    parameters:
+      osVersion: "SLES12"
+      osImage: '\"offer\": \"SLES-SAP\", 
+                \"publisher\": \"SUSE\", 
+                \"sku\": \"12-sp2\"'
   - job: RHEL7
-    - template: templates/stage-template.yaml
-      parameters:
-        osVersion: "RHEL7"
-        osImage: '\"offer\": \"RHEL\", 
-                  \"publisher\": \"RedHat\", 
-                  \"sku\": \"7-LVM\"'
+  - template: templates/stage-template.yaml
+    parameters:
+      osVersion: "RHEL7"
+      osImage: '\"offer\": \"RHEL\", 
+                \"publisher\": \"RedHat\", 
+                \"sku\": \"7-LVM\"'
 #####################################################################
 # This stage destroy resources created from all above test cases.   #
 # It will be triggered after stage CreatingResources is finished.   #
