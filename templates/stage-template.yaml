@@ -3,7 +3,7 @@ parameters:
 
 jobs:
 - ${{each p in parameters.param}}:
-  - job: createAllNewA
+  - job: createAllNew${{p.os_version}}
     variables:
       scenario: v2-allNew
       testcase: $(scenario)-$(Build.BuildId)
@@ -22,4 +22,3 @@ jobs:
       parameters:
         testCaseName: $(testcase)
     displayName: 'job ${{p}}'
-    
