@@ -5,11 +5,15 @@
   become_user: root
   vars:
     disk_dict: {}
+<<<<<<< HEAD
     hana_components: ['server']
     start: 0
     azure_files_mount_path: "/sapmnt"
     hana_install_path: "/hana/shared/install"
     hana_software_loc: "{{ azure_files_mount_path }}/DB/DATA_UNITS/HDB_SERVER_LINUX_X86_64"
+=======
+    start: 0
+>>>>>>> master
   vars_files: 
      - "vars/packages.yml" 
   pre_tasks:
@@ -31,4 +35,7 @@
   roles:
     - { role: os-preparation }
     - { role: os-disk-setup }
+<<<<<<< HEAD
     - { role: sap-media-download }
+=======
+>>>>>>> master
