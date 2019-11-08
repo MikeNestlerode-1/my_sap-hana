@@ -115,11 +115,7 @@
     {
       "platform": "HANA",
       "db_version": "2.00.043",
-      "os": {
-        "publisher": "SUSE",
-        "offer": "SLES-SAP",
-        "sku": "12-sp2"
-      },
+      "os": {var-os-image},
       "size": "Demo",
       "filesystem": "xfs",
       "high_availability": false,
@@ -165,8 +161,8 @@
       "is_existing": false,
       "account_tier": "Premium",
       "account_replication_type": "LRS",
-      "account_kind": "BlockBlobStorage",
-      "container_name": "bits",
+      "account_kind": "FileStorage",
+      "file_share_name": "bits",
       "container_access_type": "private"
     },
     "downloader": {
