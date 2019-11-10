@@ -1,18 +1,14 @@
 ---
 
+# Prepare os, disks and mount points on Hana Database servers
 - hosts: hanadbnodes
   become: true
   become_user: root
   vars:
     disk_dict: {}
-    hana_components: ['server']
-    start: 0
-    azure_files_mount_path: "/sapmnt"
-    hana_install_path: "/hana/shared/install"
-    hana_software_loc: "{{ azure_files_mount_path }}/DB/DATA_UNITS/HDB_SERVER_LINUX_X86_64"
     start: 0
   vars_files: 
-     - "vars/packages.yml" 
+#     - "vars/packages.yml" 
   pre_tasks:
     - name: Include SAP HANA DB sizes
       include_vars:
@@ -30,6 +26,40 @@
       loop: "{{ output.databases|flatten(levels=1) }}"
       when: item.platform == 'HANA'
   roles:
-    - { role: os-preparation }
-    - { role: os-disk-setup }
+#    - { role: os-preparation }
+#    - { role: os-disk-setup }
+
+# Mount Azure File share on all linux servers
+- hosts: os-independent
+  become: true
+  become_user: root
+  vars:
+    azure_files_mount_path: "/sapmnt"
+  pre_tasks:
+    - name: Include output JSON
+      include_vars:
+        file: "/home/{{ ansible_user }}/output.json"
+        name: output
+  roles:
+    - { role: mount-azure-files, when: output.software.storage_account.file_share_name == 'FileStorage' }
+
+# Download SAP Media on Azure File Share
+- hosts: localhost
+  connection: local
+  become: true
+  become_user: root
+  vars: 
+    azure_files_mount_path: "/sapmnt"
+  pre_tasks:
+    - name: Include output JSON
+      include_vars:
+        file: "/home/{{ ansible_user }}/output.json"
+        name: output 
+
+    - name: Create dictionary with HANA database inforamtion from output.JSON
+      set_fact:
+        hana_database: "{{ item }}"
+      loop: "{{ output.databases|flatten(levels=1) }}"
+      when: item.platform == 'HANA'
+  roles:
     - { role: sap-media-download }
